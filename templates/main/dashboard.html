@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Student Management System{% endblock %}
+
+{% macro has_permission(permission_name) %}
+    {{ permission_name in user_permissions }}
+{% endmacro %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+    <span class="badge bg-primary">{{ current_user.role.name|title }}</span>
+</div>
+
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Welcome, {{ current_user.full_name }}!</h5>
+                <p class="card-text">
+                    You are logged in as <b>{{ current_user.role.name|title }}</b>.
+                    Your permission:
+                    <span>
+                        {% set user_permissions = current_user.role.role_permissions | map(attribute='permission.name') | list %}
+                        {% for perm in user_permissions %}
+                            <span class="badge bg-info text-dark">{{ perm }}</span>
+                        {% endfor %}
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% set user_permissions = current_user.role.role_permissions | map(attribute='permission.name') | list %}
+
+<div class="row">
+    {% if current_user.role.name == 'admin' or current_user.role.name == 'management staff' %}
+    <div class="col-md-3 mb-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ stats.total_users }}</h4>
+                        <p>Total Users</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if current_user.role.name in ['admin', 'management staff', 'teacher'] %}
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ stats.total_students }}</h4>
+                        <p>Total Students</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-user-graduate fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ stats.total_classes }}</h4>
+                        <p>Total Classes</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-chalkboard fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ stats.total_subjects }}</h4>
+                        <p>Total Subjects</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-book fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% if current_user.role.name in ['admin', 'management staff', 'teacher'] %}
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('students.index') }}" class="btn btn-outline-success w-100">
+                            <i class="fas fa-user-graduate"></i> Manage Students
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('classes.index') }}" class="btn btn-outline-info w-100">
+                            <i class="fas fa-chalkboard"></i> Manage Classes
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('subjects.index') }}" class="btn btn-outline-warning w-100">
+                            <i class="fas fa-book"></i> Manage Subjects
+                        </a>
+                    </div>                    
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('grades.index') }}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-chart-line"></i> Manage Grades
+                        </a>
+                    </div>                    
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

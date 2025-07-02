@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}{{ subject and 'Edit' or 'Add' }} Subject - Student Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ subject and 'Edit' or 'Add' }} Subject</h2>
+    <form method="POST">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="code" class="form-label">Subject Code</label>
+                <input type="text" class="form-control" id="code" name="code"
+                       value="{{ subject.code if subject else '' }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="name" class="form-label">Subject Name</label>
+                <input type="text" class="form-control" id="name" name="name"
+                       value="{{ subject.name if subject else '' }}" required>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3">{{ subject.description if subject else '' }}</textarea>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="credits" class="form-label">Credits</label>
+                <input type="number" class="form-control" id="credits" name="credits" min="1"
+                       value="{{ subject.credits if subject else 1 }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="is_active" class="form-label">Status</label>
+                <select class="form-select" id="is_active" name="is_active">
+                    <option value="1" {% if subject and subject.is_active %}selected{% endif %}>Active</option>
+                    <option value="0" {% if subject and not subject.is_active %}selected{% endif %}>Inactive</option>
+                </select>
+            </div>
+        </div>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-success">{{ subject and 'Update' or 'Create' }}</button>
+            <a href="{{ url_for('subjects.index') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

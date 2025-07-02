@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Class Detail - {{ class_obj.name }}{% endblock %}
+
+{% block content %}
+{% set user_permissions = current_user.role.role_permissions | map(attribute='permission.name') | list %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2><i class="fas fa-chalkboard"></i> Class Detail</h2>
+        <div>
+            <a href="{{ url_for('classes.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4 class="card-title">{{ class_obj.name }}</h4>
+            <p class="card-text">
+                <strong>Grade Level:</strong> {{ class_obj.grade_level }}<br>
+                <strong>Academic Year:</strong> {{ class_obj.academic_year }}<br>
+                <strong>Homeroom Teacher:</strong>
+                {% if class_obj.homeroom_teacher %}
+                    {{ class_obj.homeroom_teacher.full_name }}
+                {% else %}
+                    <span class="text-muted">-</span>
+                {% endif %}<br>
+                <strong>Max Students:</strong> {{ class_obj.max_student }}<br>
+                <strong>Current Students:</strong> {{ class_obj.current_student_count }}<br>
+                <strong>Status:</strong>
+                {% if class_obj.is_full %}
+                    <span class="badge bg-danger">Full</span>
+                {% else %}
+                    <span class="badge bg-success">Available</span>
+                {% endif %}<br>
+                <strong>Created At:</strong> {{ class_obj.created_at.strftime('%Y-%m-%d %H:%M') if class_obj.created_at else '-' }}
+            </p>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5><i class="fas fa-users"></i> Students</h5>
+        </div>
+        <div class="card-body">
+            {% if class_obj.students %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student ID</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in class_obj.students %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ student.student_id }}</td>
+                            <td>{{ student.full_name }}</td>
+                            <td>{{ student.email }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if student.status.value == 'active' else 'secondary' }}">
+                                    {{ student.status.value.title() }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-muted">No students in this class.</div>
+            {% endif %}
+        </div>
+    </div>
+    {% if is_homeroom or (current_user.role.name == 'admin') or
+        (current_user.role.name == 'management staff' and
+        ('update_classes' in user_permissions or
+        'create_classes' in user_permissions or
+        'delete_classes' in user_permissions or
+        'assign_subjects_and_teachers' in user_permissions)) %}
+    <div class="card">
+        <div class="card-header">
+            <h5><i class="fas fa-book"></i> Subjects</h5>
+        </div>
+        <div class="card-body">
+            {% if class_obj.subjects %}
+            <ul>
+                {% for subject in class_obj.subjects %}
+                <li>{{ subject.name }} ({{ subject.code }})</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="text-muted">No subjects assigned to this class.</div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

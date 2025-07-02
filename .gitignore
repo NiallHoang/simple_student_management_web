@@ -1,0 +1,38 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+ENV/
+env/
+
+# Instance folder (Flask config, local db)
+instance/
+
+# Local config (chứa thông tin nhạy cảm)
+config_local.py
+
+# Database files
+*.sqlite3
+*.db
+
+# Log files
+*.log
+
+# Environment variables
+.env
+
+# IDE/editor files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Migrations cache (giữ lại migrations scripts nếu cần)
+migrations/__pycache__/
+migrations/*.pyc

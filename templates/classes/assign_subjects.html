@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Assign Subjects - {{ class_obj.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Assign Subjects to {{ class_obj.name }}</h2>
+    <!-- Dropdown chọn semester -->
+    <form method="GET" class="mb-3">
+        <input type="hidden" name="id" value="{{ class_obj.id }}">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="semester" class="form-label">Semester</label>
+                <select class="form-select" id="semester" name="semester" onchange="this.form.submit()">
+                    <option value="">-- Select semester --</option>
+                    {% for sem in ['Semester 1', 'Semester 2'] %}
+                        <option value="{{ sem }}" {% if semester == sem %}selected{% endif %}>Semester {{ sem }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+    <form method="POST">
+        <input type="hidden" name="semester" value="{{ semester }}">
+
+        <!-- Assigned Subjects Table -->
+        <h5>Assigned Subjects</h5>
+        <div style="max-height: 250px; overflow-y: auto;">
+            <table class="table table-bordered align-middle table-sm" style="position:relative;">
+                <thead class="table-light" style="position:sticky;top:0;z-index:1;">
+                    <tr>
+                        <th>Code</th>
+                        <th>Subject</th>
+                        <th>Teacher</th>
+                        <th>Unassign</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subject in assigned_subjects %}
+                    <tr>
+                        <td>{{ subject.code }}</td>
+                        <td>{{ subject.name }}</td>
+                        <td>
+                            <select class="form-select" name="teacher_{{ subject.id }}">
+                                <option value="">-- Select teacher --</option>
+                                {% for teacher in teachers %}
+                                    <option value="{{ teacher.id }}"
+                                        {% if assigned_teachers.get(subject.id) == teacher.id %}selected{% endif %}>
+                                        {{ teacher.full_name }} ({{ teacher.username }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" name="subject_ids" value="{{ subject.id }}" checked>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">No assigned subjects.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Unassigned Subjects Table -->
+        <h5 class="mt-4">Unassigned Subjects</h5>
+        <div style="max-height: 250px; overflow-y: auto;">
+            <table class="table table-bordered align-middle table-sm" style="position:relative;">
+                <thead class="table-light" style="position:sticky;top:0;z-index:1;">
+                    <tr>
+                        <th>Code</th>
+                        <th>Subject</th>
+                        <th>Teacher</th>
+                        <th>Assign</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subject in unassigned_subjects %}
+                    <tr>
+                        <td>{{ subject.code }}</td>
+                        <td>{{ subject.name }}</td>
+                        <td>
+                            <select class="form-select" name="teacher_{{ subject.id }}">
+                                <option value="">-- Select teacher --</option>
+                                {% for teacher in teachers %}
+                                    <option value="{{ teacher.id }}">
+                                        {{ teacher.full_name }} ({{ teacher.username }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" name="subject_ids" value="{{ subject.id }}">
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">No unassigned subjects.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-success">Save Assignments</button>
+            <a href="{{ url_for('classes.index') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

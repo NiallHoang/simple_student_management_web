@@ -1,0 +1,75 @@
+ {% extends "base.html" %}
+
+{% block title %}{{ grade and 'Edit' or 'Add' }} Grade - Student Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ grade and 'Edit' or 'Add' }} Grade</h2>
+    <form method="POST">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="student_id" class="form-label">Student</label>
+                <select class="form-select" id="student_id" name="student_id" required {% if grade %}disabled{% endif %}>
+                    <option value="">Select student</option>
+                    {% for student in students %}
+                        <option value="{{ student.id }}"
+                            {% if (grade and grade.student_id == student.id) or (request.form.get('student_id', type=int) == student.id) %}
+                                selected
+                            {% endif %}>
+                            {{ student.full_name }} ({{ student.student_id }})
+                        </option>
+                    {% endfor %}
+                </select>
+                {% if grade %}
+                    <input type="hidden" name="student_id" value="{{ grade.student_id }}">
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <label for="subject_id" class="form-label">Subject</label>
+                <select class="form-select" id="subject_id" name="subject_id" required {% if grade %}disabled{% endif %}>
+                    <option value="">Select subject</option>
+                    {% for subject in subjects %}
+                        <option value="{{ subject.id }}"
+                            {% if (grade and grade.subject_id == subject.id) or (request.form.get('subject_id', type=int) == subject.id) %}
+                                selected
+                            {% endif %}>
+                            {{ subject.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                {% if grade %}
+                    <input type="hidden" name="subject_id" value="{{ grade.subject_id }}">
+                {% endif %}
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="semester" class="form-label">Semester</label>
+                <input type="text" class="form-control" id="semester" name="semester"
+                       value="{{ grade.semester if grade else request.form.get('semester', '') }}" required {% if grade %}readonly{% endif %}>
+            </div>
+            <div class="col-md-6">
+                <label for="formative_score" class="form-label">Formative Score</label>
+                <input type="number" step="0.01" min="0" max="10" class="form-control" id="formative_score" name="formative_score"
+                       value="{{ grade.formative_score if grade and grade.formative_score is not none else request.form.get('formative_score', '') }}">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="midterm_score" class="form-label">Midterm Score</label>
+                <input type="number" step="0.01" min="0" max="10" class="form-control" id="midterm_score" name="midterm_score"
+                       value="{{ grade.midterm_score if grade and grade.midterm_score is not none else request.form.get('midterm_score', '') }}">
+            </div>
+            <div class="col-md-6">
+                <label for="final_score" class="form-label">Final Score</label>
+                <input type="number" step="0.01" min="0" max="10" class="form-control" id="final_score" name="final_score"
+                       value="{{ grade.final_score if grade and grade.final_score is not none else request.form.get('final_score', '') }}">
+            </div>
+        </div>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-success">{{ grade and 'Update' or 'Create' }}</button>
+            <a href="{{ url_for('grades.index') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
