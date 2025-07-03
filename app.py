@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, current_user
 from flask_migrate import Migrate
 import os
-# from config_local import Config, ADMIN_USERNAME, ADMIN_EMAIL, ADMIN_PASSWORD
+from config_local import Config, ADMIN_USERNAME, ADMIN_EMAIL, ADMIN_PASSWORD
 
 
 # Initialize extensions
